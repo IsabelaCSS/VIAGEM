@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roteiro João Pessoa — Julho 2026</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #f0f7f4;
+    color: #1a2e25;
+    line-height: 1.6;
+  }
+
+  header {
+    background: linear-gradient(135deg, #0d5c3a 0%, #1a8a57 100%);
+    color: white;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+  }
+
+  header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.3rem; }
+  header p  { font-size: 1rem; opacity: 0.85; }
+
+  .badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .badge {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.8rem;
+  }
+
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    max-width: 700px;
+    margin: 1.5rem auto;
+    padding: 0 1rem;
+  }
+
+  .sum-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    border: 1px solid #c8e6d5;
+  }
+
+  .sum-num   { font-size: 1.5rem; font-weight: 700; color: #0d5c3a; }
+  .sum-label { font-size: 0.75rem; color: #5a7a6a; margin-top: 2px; }
+
+  .recommendation {
+    max-width: 700px;
+    margin: 0 auto 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .rec-box {
+    background: #e1f5ee;
+    border: 1px solid #9fe1cb;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+  }
+
+  .rec-box h3 { font-size: 0.95rem; color: #085041; margin-bottom: 5px; }
+  .rec-box p  { font-size: 0.85rem; color: #0f6e56; }
+
+  .days {
+    max-width: 700px;
+    margin: 0 auto 2rem;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .day-card {
+    background: white;
+    border-radius: 14px;
+    border: 1px solid #c8e6d5;
+    overflow: hidden;
+  }
+
+  .day-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 1.25rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+
+  .day-header:hover { background: #f0f7f4; }
+
+  .day-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    background: #e1f5ee;
+    color: #085041;
+  }
+
+  .day-badge.alert    { background: #faece7; color: #993c1d; }
+  .day-badge.optional { background: #faeeda; color: #854f0b; }
+  .day-badge.partida  { background: #eeedfe; color: #3c3489; }
+  .day-badge.sunset   { background: #fff3e0; color: #e65100; }
+
+  .day-title { font-size: 0.95rem; font-weight: 600; flex: 1; }
+  .day-date  { font-size: 0.78rem; color: #5a7a6a; white-space: nowrap; }
+
+  .chevron {
+    font-size: 1rem;
+    color: #5a7a6a;
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+  .chevron.open { transform: rotate(180deg); }
+
+  .day-body      { display: none; padding: 0 1.25rem 1rem; }
+  .day-body.open { display: block; }
+
+  .activity          { border-left: 3px solid #9fe1cb; padding: 8px 0 8px 14px; margin: 10px 0; }
+  .activity.transit  { border-left-color: #b5d4f4; }
+  .activity.optional { border-left-color: #fac775; }
+  .activity.warning  { border-left-color: #f5c4b3; }
+  .activity.night    { border-left-color: #cecbf6; }
+  .activity.sunset   { border-left-color: #ffb74d; }
+  .activity.meal     { border-left-color: #a5d6a7; }
+
+  .act-time   { font-size: 0.72rem; font-weight: 600; color: #5a7a6a; margin-bottom: 3px; }
+  .act-title  { font-size: 0.9rem; font-weight: 600; color: #1a2e25; }
+  .act-detail { font-size: 0.82rem; color: #3d5a4a; margin-top: 3px; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+
+  .tag {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    color: #5a7a6a;
+  }
+
+  .tag.price { background: #eaf3de; color: #3b6d11; border-color: #c0dd97; }
+  .tag.uber  { background: #e6f1fb; color: #185fa5; border-color: #b5d4f4; }
+  .tag.time  { background: #f5f5f5; color: #555; }
+  .tag.free  { background: #e1f5ee; color: #0f6e56; border-color: #9fe1cb; }
+
+  .note-box {
+    background: #faeeda;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    color: #633806;
+    margin-top: 10px;
+  }
+
+  .alert-box {
+    background: #faece7;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    color: #712b13;
+    margin-top: 10px;
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: 0.8rem;
+    color: #5a7a6a;
+  }
+
+  footer a { color: #0d5c3a; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏖️ João Pessoa — Julho 2026</h1>
+  <p>Roteiro completo para 4 adultos · Praia de Tambaú</p>
+  <div class="badge-row">
+    <span class="badge">✈️ Chegada: 05/07 às 00h</span>
+    <span class="badge">🛫 Partida: 11/07 às 03h</span>
+    <span class="badge">🏨 Checkout: 11/07 às 12h</span>
+  </div>
+</header>
+
+<div class="summary">
+  <div class="sum-card"><div class="sum-num">6</div><div class="sum-label">dias de viagem</div></div>
+  <div class="sum-card"><div class="sum-num">~R$320</div><div class="sum-label">passeios p/ pessoa</div></div>
+  <div class="sum-card"><div class="sum-num">4</div><div class="sum-label">passeios confirmados</div></div>
+  <div class="sum-card"><div class="sum-num">1</div><div class="sum-label">passeio opcional</div></div>
+</div>
+
+<div class="recommendation">
+  <div class="rec-box">
+    <h3>🏊 Recomendação: Piscinas Naturais do Seixas</h3>
+    <p>Na sua janela de viagem (05–11/07), apenas <strong>05/07 (domingo)</strong> e <strong>06/07 (segunda)</strong> têm passeio disponível — ambas com partida às 11h30. As piscinas do Seixas ficam ao lado da Ponta do Seixas e do Cabo Branco — combine tudo no mesmo dia! Inclui atrações gratuitas: caiaque, toboágua e tapete flutuante.</p>
+  </div>
+</div>
+
+<div class="days" id="days"></div>
+
+<footer>
+  Reservas: <a href="https://jampatur.com" target="_blank">jampatur.com</a> · WhatsApp: (83) 98914-9384
+</footer>
+
+<script>
+const days = [
+  {
+    date: "05/07", weekday: "Dom", title: "Chegada & descanso", badge: "Chegada",
+    activities: [
+      { time: "00h00", title: "Chegada em João Pessoa", detail: "Desembarque no Aeroporto Castro Pinto (CGO). Check-in no hotel em frente à Praia de Tambaú.", type: "transit", tags: [{l:"Uber aeroporto→hotel: ~R$40–60", c:"uber"}] },
+      { time: "Manhã", title: "Descanso e primeiras horas na praia", detail: "Dia de aclimatação. Praia de Tambaú bem em frente ao hotel. Descanse da madrugada!", tags: [{l:"Gratuito", c:"free"}] },
+      { time: "12h00–13h30", title: "🍽️ Almoço — Quiosques da Orla de Tambaú", detail: "Frutos do mar frescos, tapioca, macaxeira frita e drinks gelados nos quiosques da Av. Almte. Tamandaré, bem em frente ao hotel.", type: "meal", tags: [{l:"~R$40–70 p/ pessoa", c:"price"},{l:"5 min a pé do hotel", c:"time"}] },
+      { time: "Tarde/Noite", title: "Descanso no hotel", detail: "Noite livre para recuperar o fôlego. Reserve energia para os dias seguintes!", type: "night" }
+    ],
+    note: "💡 O passeio das Piscinas do Seixas está disponível às 11h30 no próprio 05/07 — mas vocês chegam à meia-noite. Recomendamos descansar e fazer o passeio no dia 06/07."
+  },
+  {
+    date: "06/07", weekday: "Seg", title: "🌊 Piscinas do Seixas + Cabo Branco", badge: "Destaque",
+    activities: [
+      { time: "08h00–09h00", title: "☕ Café da manhã", detail: "Café reforçado antes do passeio. Muitos hotéis na orla incluem café da manhã — confirme com o seu.", type: "meal", tags: [{l:"Incluso no hotel ou ~R$20–35", c:"price"}] },
+      { time: "09h00–11h00", title: "Deslocamento ao ponto de embarque", detail: "Deslocamento até o ponto de embarque da Jampatur (confirmado no voucher após reserva).", type: "transit", tags: [{l:"Uber hotel→embarque: ~R$15–25", c:"uber"},{l:"~20 min", c:"time"}] },
+      { time: "11h30–14h30", title: "🌊 Piscinas Naturais do Seixas", detail: "Passeio de catamarã com parada para banho em piscinas naturais com corais. Atrações gratuitas: caiaque, toboágua, boias, tapete flutuante. Duração aprox. 3h.", tags: [{l:"~R$70 p/ pessoa", c:"price"},{l:"R$280 total (4 pessoas)", c:"price"},{l:"jampatur.com", c:"time"}] },
+      { time: "14h30–15h30", title: "🍽️ Almoço — Região do Seixas", detail: "Após o passeio, coma na região! Barracas e restaurantes com pratos regionais e frutos do mar fresquíssimos.", type: "meal", tags: [{l:"~R$40–70 p/ pessoa", c:"price"}] },
+      { time: "15h30–16h00", title: "Ponta do Seixas", detail: "Ponto mais oriental das Américas! Av. Cabo Branco — aberto até 17h. Parque com artesanato e comidas típicas ao lado.", tags: [{l:"Gratuito", c:"free"},{l:"~5 min do desembarque", c:"time"}] },
+      { time: "16h00–17h00", title: "Farol do Cabo Branco", detail: "Mirante com vista incrível. Aberto das 8h às 17h.", tags: [{l:"Gratuito", c:"free"},{l:"Uber Seixas→Cabo Branco: ~R$10", c:"uber"}] },
+      { time: "20h00", title: "🍽️ Jantar — Restaurante em Tambaú", detail: "Frutos do mar, moqueca paraibana ou peixe assado na orla.", type: "meal", tags: [{l:"~R$60–100 p/ pessoa", c:"price"}] }
+    ],
+    note: "💡 Passeio de barco + Ponta do Seixas + Cabo Branco numa mesma saída — economiza muito deslocamento!"
+  },
+  {
+    date: "07/07", weekday: "Ter", title: "Dia livre — Praia e orla", badge: "Livre",
+    activities: [
+      { time: "Manhã", title: "☕ Café + Praia de Tambaú", detail: "Aproveite a praia em frente ao hotel. Maré alta cancela passeios de barco, mas a praia está linda!", tags: [{l:"Gratuito", c:"free"}] },
+      { time: "12h30–14h00", title: "🍽️ Almoço — Restaurante na orla", detail: "Experimente um restaurante diferente na Av. Almte. Tamandaré. Ótimas opções de culinária paraibana e frutos do mar.", type: "meal", tags: [{l:"~R$50–90 p/ pessoa", c:"price"}] },
+      { time: "Tarde", title: "Explorar Tambaú e Manaíra", detail: "Shoppings Tambaú e Manaíra, calçadão, artesanato ou passeio de buggy na orla.", type: "transit", tags: [{l:"Livre", c:"free"}] },
+      { time: "20h00", title: "🍽️ Jantar livre", detail: "Escolha um restaurante na orla ou experimente uma tapiocaria — a tapioca paraibana é imperdível!", type: "meal", tags: [{l:"~R$40–80 p/ pessoa", c:"price"}] }
+    ],
+    alert: "🚫 Dias 07, 08, 09 e 10/07 têm maré alta — sem passeios de barco disponíveis. Planeje atividades em terra!"
+  },
+  {
+    date: "08/07", weekday: "Qua", title: "Centro Histórico de João Pessoa", badge: "Cultural",
+    activities: [
+      { time: "08h30", title: "☕ Café da manhã no hotel", detail: "Café antes de sair para o centro histórico.", type: "meal", tags: [{l:"Incluso no hotel ou ~R$20", c:"price"}] },
+      { time: "09h00", title: "Deslocamento ao centro histórico", detail: "Uber de Tambaú até o centro. Distância: ~7 km.", type: "transit", tags: [{l:"Uber hotel→centro: ~R$20–30", c:"uber"},{l:"~20 min", c:"time"}] },
+      { time: "09h30–12h30", title: "Centro Cultural São Francisco", detail: "Ladeira São Francisco, S/N – Centro. Aberto ter a sáb 9h–17h, dom 9h–15h. Ingressos presencial na bilheteria (encerra 30 min antes). Visitas guiadas obrigatórias.", tags: [{l:"~R$20–30 p/ pessoa", c:"price"},{l:"~18 min a pé do Largo", c:"time"}] },
+      { time: "12h30–13h00", title: "Caminhada ao Largo de São Frei Pedro Gonçalves", detail: "Praça São Pedro Gonçalves, 7 – Varadouro. ~18 min a pé do Centro Cultural.", tags: [{l:"18 min a pé", c:"time"}] },
+      { time: "13h00–15h00", title: "🍽️ Almoço — Centro histórico", detail: "Restaurante bem avaliado próximo ao Largo. Culinária paraibana: baião de dois, carnes do sertão, frutos do mar. Preço médio-alto.", type: "meal", tags: [{l:"~R$70–120 p/ pessoa", c:"price"}] },
+      { time: "15h00–17h00", title: "Largo de São Frei Pedro Gonçalves", detail: "Igreja histórica, praça colonial, arquitetura barroca. Aberto das 8h às 17h. Ótimo para fotos!", tags: [{l:"Gratuito", c:"free"}] },
+      { time: "17h30", title: "Retorno ao hotel", detail: "Uber do centro histórico para Tambaú.", type: "transit", tags: [{l:"Uber centro→hotel: ~R$20–30", c:"uber"}] },
+      { time: "20h00", title: "🍽️ Jantar — Orla de Tambaú", detail: "Noite tranquila com jantar na orla. Boa pedida: peixe grelhado ou camarão na moranga.", type: "meal", tags: [{l:"~R$60–100 p/ pessoa", c:"price"}] }
+    ]
+  },
+  {
+    date: "09/07", weekday: "Qui", title: "Quadriciclo — Litoral Sul (opcional)", badge: "Opcional",
+    activities: [
+      { time: "08h00–08h30", title: "☕ Café da manhã rápido", detail: "Café reforçado antes da van buscar o grupo.", type: "meal", tags: [{l:"~R$20–30", c:"price"}] },
+      { time: "08h30–16h00", title: "🟡 [OPCIONAL] Sul Pé na Areia com Quadriciclo", detail: "Litoral sul: Barra do Gramame, Praia de Tambaba, Coqueirinho. Quadriciclo (1h40): Mirante Dedo de Deus, Mirante das Tartarugas, Castelinho da Princesa. Van executiva inclusa. Retorno: ~15h30–16h.", type: "optional", tags: [{l:"~R$100 p/ pessoa", c:"price"},{l:"2 quadriciclos p/ 4 pessoas", c:"time"},{l:"~R$600–700 total", c:"price"}] },
+      { time: "13h00", title: "🍽️ Almoço — Durante o passeio", detail: "Paradas em praias com barracas de comida. Frutos do mar frescos na beira da praia.", type: "meal", tags: [{l:"~R$40–70 p/ pessoa", c:"price"}] },
+      { time: "Caso não faça o passeio", title: "Praia e lazer em Tambaú", detail: "Explore praias vizinhas: Manaíra, Bessa ou Cabo Branco.", tags: [{l:"Gratuito", c:"free"}] },
+      { time: "20h00", title: "🍽️ Jantar — Orla de Tambaú", detail: "Jantar leve na orla para descansar após o dia de passeio.", type: "meal", tags: [{l:"~R$50–80 p/ pessoa", c:"price"}] }
+    ],
+    note: "🟡 Para 4 pessoas são necessários 2 quadriciclos. Verifique disponibilidade: (83) 98914-9384."
+  },
+  {
+    date: "10/07", weekday: "Sex", title: "🌅 Pôr do Sol no Jacaré — Último dia completo", badge: "Pôr do Sol",
+    badgeStyle: "sunset",
+    activities: [
+      { time: "08h30–09h30", title: "☕ Café da manhã tranquilo", detail: "Último dia cheio — comece com calma! Café no hotel ou em uma padaria da orla.", type: "meal", tags: [{l:"~R$20–35", c:"price"}] },
+      { time: "10h00–13h00", title: "Praia de Tambaú — último mergulho", detail: "Aproveite a praia em frente ao hotel pela última vez. Mergulho, sol e descanso.", tags: [{l:"Gratuito", c:"free"}] },
+      { time: "13h00–14h30", title: "🍽️ Almoço especial de despedida", detail: "Marque um restaurante bem avaliado em Tambaú. Experimente moqueca paraibana, lagosta ou caldeirada de frutos do mar.", type: "meal", tags: [{l:"~R$80–150 p/ pessoa", c:"price"},{l:"Reservar com antecedência", c:"time"}] },
+      { time: "14h30–16h00", title: "Descanso + arrumar malas", detail: "Descanse no hotel e aproveite para arrumar as malas com calma.", type: "night" },
+      { time: "16h30–17h00", title: "Deslocamento para Praia do Jacaré", detail: "Uber de Tambaú até a Praia do Jacaré, em Cabedelo. Distância: ~18 km.", type: "transit", tags: [{l:"Uber hotel→Jacaré: ~R$35–50", c:"uber"},{l:"~25 min", c:"time"}] },
+      { time: "17h00–18h30", title: "🌅 Pôr do Sol na Praia do Jacaré", detail: "Um dos pôres do sol mais famosos do Brasil! Às margens do Rio Paraíba, com saxofonista tocando ao vivo. Chegue cedo para garantir bom lugar. Há barracas com coco gelado, tira-gostos e artesanato local.", type: "sunset", tags: [{l:"Gratuito", c:"free"},{l:"Saxofone ao vivo", c:"time"},{l:"Cabedelo — ~18 km de Tambaú", c:"time"}] },
+      { time: "19h30–21h30", title: "🍽️ Jantar de encerramento", detail: "Jante na região do Jacaré (frutos do mar à beira do rio) ou retorne a Tambaú para um restaurante especial de despedida.", type: "meal", tags: [{l:"~R$70–120 p/ pessoa", c:"price"},{l:"Uber Jacaré→hotel: ~R$35–50", c:"uber"}] },
+      { time: "22h00 em diante", title: "Última noite tranquila no hotel", detail: "Descanse bem — amanhã é dia de checkout às 12h e voo à madrugada.", type: "night" }
+    ],
+    note: "🌅 O pôr do sol no Jacaré acontece por volta das 17h30–18h em julho. Chegue antes das 17h para garantir bom lugar na beira do rio!"
+  },
+  {
+    date: "11/07", weekday: "Sáb", title: "Checkout & aguardar voo", badge: "Partida",
+    badgeStyle: "partida",
+    activities: [
+      { time: "08h00–09h00", title: "☕ Café da manhã no hotel", detail: "Último café da manhã! Aproveite com calma antes do checkout.", type: "meal", tags: [{l:"Incluso no hotel ou ~R$20–30", c:"price"}] },
+      { time: "09h00–11h30", title: "Últimas compras e orla", detail: "Tempo livre para compras de última hora no calçadão de Tambaú, lembranças ou uma última caminhada na praia.", tags: [{l:"Gratuito", c:"free"}] },
+      { time: "12h00", title: "🏨 Checkout do hotel", detail: "Checkout obrigatório ao meio-dia. Deixe as bagagens na recepção caso queira aproveitar mais a cidade.", type: "warning", tags: [{l:"Checkout: 12h00", c:"time"}] },
+      { time: "12h30–14h00", title: "🍽️ Almoço final em João Pessoa", detail: "Almoço de despedida em um restaurante próximo ao hotel ou na orla. Último sabor paraibano!", type: "meal", tags: [{l:"~R$50–90 p/ pessoa", c:"price"}] },
+      { time: "14h00–23h30", title: "Tempo livre — Orla, shopping ou descanso", detail: "Ainda há muito tempo antes do aeroporto! Aproveite a orla, um shopping, ou descanse em um café. Alguns hotéis permitem uso da piscina após o checkout — pergunte na recepção.", tags: [{l:"Livre", c:"free"}] },
+      { time: "23h30–00h00", title: "Deslocamento para o aeroporto", detail: "Saída para o Aeroporto Castro Pinto (CGO). Distância: ~18 km de Tambaú. Na madrugada, solicite o Uber com antecedência.", type: "transit", tags: [{l:"Uber hotel→aeroporto: ~R$45–70", c:"uber"},{l:"~25–35 min", c:"time"}] },
+      { time: "01h00–03h00", title: "Aeroporto — Check-in e embarque", detail: "Check-in, despacho de bagagens e área de embarque. Chegue com 1h30–2h de antecedência.", type: "transit" },
+      { time: "03h00", title: "✈️ Embarque — Voo de retorno", detail: "Até a próxima, João Pessoa! Boa viagem!", type: "transit" }
+    ],
+    note: "💡 Entre o checkout (12h) e o aeroporto (~23h30) há quase 12 horas livres. Aproveite para explorar mais a cidade ou descansar em um café com as malas!"
+  }
+];
+
+function renderDays() {
+  const container = document.getElementById('days');
+  days.forEach((day, i) => {
+    const card = document.createElement('div');
+    card.className = 'day-card';
+
+    const badgeStyle = day.badgeStyle || (
+      day.badge === 'Maré alta'  ? 'alert'    :
+      day.badge === 'Opcional'   ? 'optional' :
+      day.badge === 'Partida'    ? 'partida'  :
+      day.badge === 'Pôr do Sol' ? 'sunset'   : ''
+    );
+
+    let html = `
+      <div class="day-header" onclick="toggle(${i})">
+        <span class="day-badge ${badgeStyle}">${day.badge}</span>
+        <span class="day-title">${day.title}</span>
+        <span class="day-date">${day.date} · ${day.weekday}</span>
+        <span class="chevron" id="chev-${i}">▾</span>
+      </div>
+      <div class="day-body" id="body-${i}">
+    `;
+
+    day.activities.forEach(act => {
+      html += `<div class="activity ${act.type || ''}">`;
+      html += `<div class="act-time">${act.time}</div>`;
+      html += `<div class="act-title">${act.title}</div>`;
+      html += `<div class="act-detail">${act.detail}</div>`;
+      if (act.tags) {
+        html += `<div class="tags">`;
+        act.tags.forEach(t => { html += `<span class="tag ${t.c}">${t.l}</span>`; });
+        html += `</div>`;
+      }
+      html += `</div>`;
+    });
+
+    if (day.note)  html += `<div class="note-box">${day.note}</div>`;
+    if (day.alert) html += `<div class="alert-box">${day.alert}</div>`;
+    html += `</div>`;
+
+    card.innerHTML = html;
+    container.appendChild(card);
+  });
+}
+
+function toggle(i) {
+  const body = document.getElementById('body-' + i);
+  const chev = document.getElementById('chev-' + i);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chev.classList.toggle('open', !isOpen);
+}
+
+renderDays();
+</script>
+</body>
+</html>
